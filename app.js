@@ -15,11 +15,11 @@ var app = express();
 // Base de datos
 
 var connection = mysql.createConnection({
-host : 'localhost',
-user : 'root',
-password : 'root',
-database: 'intercambios',
-port: 8889
+host : 'intercambios2013.db.10388631.hostedresource.com',
+user : 'intercambios2013',
+password : 'Intercambios!1',
+database: 'intercambios2013',
+port: 3306
 });
 
 // Configuracion inicial
@@ -83,7 +83,7 @@ app.post('/post/evento', function(req, res) {
     res.statusCode = 400;
     return res.send('Error 400, el formato del post JSON es incorrecto debe ser:'+
       '{'+
-        '"nombre_evento":"nombre_evento",'+
+        '"nombre":"nombre",'+
         '"fecha":"2013/12/24",'+
         '"participantes":99,'+
         '"precio":100'+      
@@ -109,6 +109,62 @@ app.post('/post/evento', function(req, res) {
 
   res.writeHead(200, {'Content-Type': 'application/json'});
   res.json()
+
+
+});
+app.put('/update/evento/:id', function(req, res) {
+  //fecha debe tener este formato: YYYY/mm/ddd ej: 2013/12/24
+  if(!req.body.hasOwnProperty('nombre') || 
+  //   !req.body.hasOwnProperty('fecha')) ||
+  //   !req.body.hasOwnProperty('participantes')) ||
+     !req.body.hasOwnProperty('precio')) {
+    res.statusCode = 400;
+    return res.send('Error 400, el formato del post JSON es incorrecto debe ser:'+
+      '{'+
+        '"nombre_evento":"nombre_evento",'+
+        '"fecha":"2013/12/24",'+
+        '"participantes":99,'+
+        '"precio":100'+      
+      '}');
+  }
+
+  var nombre = req.body.nombre;
+  var fecha = new Date(req.body.fecha);
+  var fecha = formatDate(fecha);
+  var participantes = req.body.participantes;
+  var precio = req.body.precio;
+
+  connection.query('update intercambios_evento set nombre = "' + nombre +'", fecha_evento = "'+fecha+'", numero_participantes = "'+participantes+'", precio = "'+precio+'" where id= '+req.params.id+ ';',function (error, rows, fields) {
+   console.log(error);
+   
+    
+    
+          }); 
+
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Se modifico correctamente el evento:'+req.params.id);
+
+
+});
+
+app.put('/cancelar/evento/:id', function(req, res) {
+  
+
+  var nombre = req.body.nombre;
+  var fecha = new Date(req.body.fecha);
+  var fecha = formatDate(fecha);
+  var participantes = req.body.participantes;
+  var precio = req.body.precio;
+
+  connection.query('update intercambios_evento set estado = "cancelado" where id= '+req.params.id+ ';',function (error, rows, fields) {
+   console.log(error);
+   
+    
+    
+          }); 
+
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Se cancelo el evento:'+req.params.id);
 
 
 });
