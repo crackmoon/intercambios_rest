@@ -35,9 +35,18 @@ app.configure(function () {
 app.get('/', function (req, res) {
   res.send('Api Intercambios REST:</br>'+
   			'<ul>'+
-  			'<li>Lista de todos los eventos              : /get/eventos/ </li>'+
-  			'<li>Lista de todos los eventos de un usuario : /get/eventos/user/:id </li>'+
-  			'<li>Lista de todos usuarios				  : /get/usuarios/ </li>'+
+        '<h3>Metodos get:</h3>'+
+  			'<li>Lista de todos los eventos              : /get/eventos </li>'+
+  			'<li>Lista de todos los eventos de un usuario : /get/eventos/usuario/:id </li>'+
+  			'<li>Lista de todos usuarios				  : /get/usuarios </li>'+
+        '<li>Lista de todos los eventos del administrador : /get/eventos/admin/:id </li>'+
+        '<li>Muestra los detalles de un evento : get/evento/:id'+
+        '<h3>Metodos post</h3>'+
+        '<li>Crear un nuevo evento          : /post/evento </li>'+
+        '<div>{"creador":id,"nombre":"nombre","fecha":"2013/12/24","participantes":99,"precio":100}</div>'+
+        '<h3>Metodos put</h3>'+
+        '<li>Actualiza la informacion de un evento : /update/evento/:id</li>'+
+        '<div>{"creador":id,"nombre":"nombre","fecha":"2013/12/24","participantes":99,"precio":100}</div>'+
   			'</ul>'
   			);
 });
@@ -70,7 +79,17 @@ app.get('/get/eventos/usuario/:id', function (req, res){
       }); 
 });
 
-app.get('/get/admin/usuario/:id', function (req, res){
+app.get('/get/evento/:id', function (req, res){
+  connection.query('SELECT * FROM intercambios_evento where id ='+req.params.id+';', function (error, rows, fields) {
+ 
+ 
+          res.writeHead(200, {'Content-Type': 'application/json'});
+     res.end(JSON.stringify(rows));
+    
+      }); 
+});
+
+app.get('/get/eventos/admin/:id', function (req, res){
   connection.query('SELECT * FROM intercambios_evento where admin_id ='+req.params.id, function (error, rows, fields) { 
          res.writeHead(200, {'Content-Type': 'application/json'});
      res.end(JSON.stringify(rows));
@@ -78,21 +97,15 @@ app.get('/get/admin/usuario/:id', function (req, res){
       }); 
 });
 
-app.get('/usuario/:id', function (req, res){
-	connection.query('SELECT * FROM user where id ='+req.params.id, function (error, rows, fields) { 
-         res.writeHead(200, {'Content-Type': 'application/json'});
-		 res.end(JSON.stringify(rows));
-		
-      }); 
-});
+
 
 app.post('/post/evento', function(req, res) {
-  //fecha debe tener este formato: YYYY/mm/ddd ej: 2013/12/24
   if(!req.body.hasOwnProperty('nombre') || 
      !req.body.hasOwnProperty('fecha')) {
     res.statusCode = 400;
     return res.send('Error 400, el formato del post JSON es incorrecto debe ser:'+
       '{'+
+        '"creador":id,'+
         '"nombre":"nombre",'+
         '"fecha":"2013/12/24",'+
         '"participantes":99,'+
@@ -105,8 +118,10 @@ app.post('/post/evento', function(req, res) {
   var fecha = formatDate(fecha);
   var participantes = req.body.participantes;
   var precio = req.body.precio;
-
-  connection.query('insert into intercambios_evento ( admin_id, nombre , fecha_evento, numero_participantes, precio, fecha_creacion ) values (' + "'1','" + nombre +"'" +',' + "'"+ fecha +"'" +',' + "'"+ participantes +"'" +',' + "'"+ precio +"',NOW()" +');', function (error, rows, fields) { 
+  var creador = req.body.creador;
+  var activo = "activo";
+  console.log('insert into intercambios_evento ( admin_id, nombre , fecha_evento, numero_participantes, precio, fecha_creacion,estado ) values (2,' + "'"+ nombre +"'" +',' + "'"+ fecha +"'" +',' + "'"+ participantes +"'" +',' + "'"+ precio +"',NOW()" +"'"+activo+"'"+');');
+  connection.query('insert into intercambios_evento ( admin_id, nombre , fecha_evento, numero_participantes, precio, fecha_creacion,estado ) values ('+"'"+creador+"'"+',' + "'"+ nombre +"'" +',' + "'"+ fecha +"'" +',' + "'"+ participantes +"'" +',' + "'"+ precio +"',NOW()," +"'"+activo+"'"+');', function (error, rows, fields) { 
    console.log(error);
    connection.query('SELECT * FROM intercambios_evento where id ='+rows.insertID, function (error, rows, fields) { 
      res.writeHead(200, {'Content-Type': 'application/json'});
@@ -180,19 +195,7 @@ app.put('/cancelar/evento/:id', function(req, res) {
 });
 
 
-app.post('/insertuser', function (req, res){
-  console.log("POST: ");
-  
-  username = req.body.user;
-  password = req.body.user;
-  console.log('insert into user ( username , password ) values (' + "'" + username +"'" +',' + "'"+ password +"'" +');');
-  connection.query('insert into user ( username , password ) values (' + "'" + username +"'" +',' + "'"+ password +"'" +');', function (error, rows, fields) { 
-		//console.log(error);
-         res.writeHead(200, {'Content-Type': 'text/plain'});
-		 
-			res.end( 'record inerted...');
-		      }); 
-});
+
 
 //Formateo para poder guardar fechas en mysql
 function formatDate(date) {
