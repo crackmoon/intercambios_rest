@@ -61,10 +61,20 @@ app.get('/get/eventos', function (req, res) {
 
 //Regresa todos los eventos de un usuario en especifico
 app.get('/get/eventos/usuario/:id', function (req, res){
-	connection.query('SELECT * FROM intercambios_evento where admin_id ='+req.params.id, function (error, rows, fields) { 
-         res.writeHead(200, {'Content-Type': 'application/json'});
+	connection.query('SELECT * FROM intercambios_evento where id in (SELECT evento_id   FROM intercambios_participantesevento WHERE usuario_id='+req.params.id+')', function (error, rows, fields) {
+ 
+ 
+          res.writeHead(200, {'Content-Type': 'application/json'});
 		 res.end(JSON.stringify(rows));
 		
+      }); 
+});
+
+app.get('/get/admin/usuario/:id', function (req, res){
+  connection.query('SELECT * FROM intercambios_evento where admin_id ='+req.params.id, function (error, rows, fields) { 
+         res.writeHead(200, {'Content-Type': 'application/json'});
+     res.end(JSON.stringify(rows));
+    
       }); 
 });
 
