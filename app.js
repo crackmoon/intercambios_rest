@@ -22,6 +22,15 @@ database: 'intercambios2013',
 port: 3306
 });
 
+
+// var connection = mysql.createConnection({
+// host : 'localhost',
+// user : 'root',
+// password : 'root',
+// database: 'intercambios',
+// port: '8889'
+// });
+
 // Configuracion inicial
 
 app.configure(function () {
@@ -63,6 +72,7 @@ app.get('/get/usuarios', function (req, res) {
 //Regresa todos los eventos registrados en la aplicación
 app.get('/get/eventos', function (req, res) {
    connection.query('SELECT * FROM intercambios_evento;', function (error, rows, fields) { 
+    console.log(error);
          res.writeHead(200, { 'Content-Type': 'application/json' });
 		 res.end(JSON.stringify(rows));
       }); 
@@ -120,10 +130,18 @@ app.post('/post/evento', function(req, res) {
   var precio = req.body.precio;
   var creador = req.body.creador;
   var activo = "activo";
-  console.log('insert into intercambios_evento ( admin_id, nombre , fecha_evento, numero_participantes, precio, fecha_creacion,estado ) values (2,' + "'"+ nombre +"'" +',' + "'"+ fecha +"'" +',' + "'"+ participantes +"'" +',' + "'"+ precio +"',NOW()" +"'"+activo+"'"+');');
-  connection.query('insert into intercambios_evento ( admin_id, nombre , fecha_evento, numero_participantes, precio, fecha_creacion,estado ) values ('+"'"+creador+"'"+',' + "'"+ nombre +"'" +',' + "'"+ fecha +"'" +',' + "'"+ participantes +"'" +',' + "'"+ precio +"',NOW()," +"'"+activo+"'"+');', function (error, rows, fields) { 
-   console.log(error);
-   connection.query('SELECT * FROM intercambios_evento where id ='+rows.insertID, function (error, rows, fields) { 
+  
+  //console.log('insert into intercambios_evento ( admin_id, nombre , fecha_evento, numero_participantes, precio, fecha_creacion,estado ) values (2,' + "'"+ nombre +"'" +',' + "'"+ fecha +"'" +',' + "'"+ participantes +"'" +',' + "'"+ precio +"',NOW()" +"'"+activo+"'"+');');
+  connection.query('INSERT into intercambios_evento ( admin_id, nombre , fecha_evento, numero_participantes, precio, fecha_creacion,estado ) values ('+"'"+creador+"'"+',' + "'"+ nombre +"'" +',' + "'"+ fecha +"'" +',' + "'"+ participantes +"'" +',' + "'"+ precio +"',NOW()," +"'"+activo+"'"+');', function (error, rows, fields) {  
+ // console.log('INSERT into intercambios_participantesevento (usuario_id, evento_id, fecha ) values ('+"'"+creador+"'"+','+"'"+rows['insertId']+"',NOW()"+');');
+  connection.query('INSERT into intercambios_participantesevento (usuario_id, evento_id, fecha ) values ('+"'"+creador+"'"+','+"'"+rows['insertId']+"',NOW()"+');', function (error, rows, fields) { 
+  //    console.log(error);
+    console.log(error);
+      //console.log(error);
+     console.log(JSON.stringify(rows));
+       
+     // console.log(evento_id);
+
      res.writeHead(200, {'Content-Type': 'application/json'});
      res.end(JSON.stringify(rows));
     
@@ -132,8 +150,6 @@ app.post('/post/evento', function(req, res) {
     
           }); 
 
-  res.writeHead(200, {'Content-Type': 'application/json'});
-  res.json()
 
 
 });
