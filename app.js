@@ -100,7 +100,7 @@ app.get('/eventos', function (request, res) {
     //res.writeHead(200, {'Content-Type': 'application/json'}); 
    connection.query('SELECT * FROM intercambios_evento;', function (error, rows, fields) { 
    
-    res.header('Access-Control-Allow-Origin', "*");    
+	res.writeHead(200, {'Content-Type': 'application/json'});
     res.end( JSON.stringify(rows));
     
    });
@@ -121,8 +121,8 @@ app.get('/eventos/usuario/:id', function (req, res){
 	connection.query('SELECT * FROM intercambios_evento where id in (SELECT evento_id   FROM intercambios_participantesevento WHERE usuario_id='+req.params.id+' and estado="activo")', function (error, rows, fields) {
  
  
-          res.writeHead(200, {'Content-Type': 'application/json'});
-		 res.end(JSON.stringify(rows[0]));
+         res.writeHead(200, {'Content-Type': 'application/json'});
+		 res.end(JSON.stringify(rows));
 		
       }); 
 });
