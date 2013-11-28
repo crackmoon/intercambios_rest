@@ -143,7 +143,7 @@ app.get('/eventos/admin/:id', function (req, res){
 /*************************/
 
 //Crea un nuevo evento
-app.post('/evento', function(req, res) {
+app.post('/evento/admin/:id', function(req, res) {
 
   var nombre = req.body.nombre;
   var fecha = new Date(req.body.fecha_evento);
@@ -151,7 +151,7 @@ app.post('/evento', function(req, res) {
   var participantes = req.body.numero_participantes;
   var precio = req.body.precio;
   var activo = "activo";
-  var admin_id = req.body.admin_id;
+  var admin_id = req.params.id;
 
 
   connection.query('INSERT into intercambios_evento ( admin_id, nombre , fecha_evento, numero_participantes, precio, fecha_creacion,estado ) values ('+"'"+admin_id+"'"+',' + "'"+ nombre +"'" +',' + "'"+ fecha +"'" +',' + "'"+ participantes +"'" +',' + "'"+ precio +"',NOW()," +"'"+activo+"'"+');', function (error, rows, fields) {  
