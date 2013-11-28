@@ -12,7 +12,7 @@ var application_root = __dirname,
 
 var app = express();
 
-// Base de datos
+// Conexion a la Base de datos
 
 var connection = mysql.createConnection({
 host : 'intercambios2013.db.10388631.hostedresource.com',
@@ -34,7 +34,7 @@ port: 3306
 // Configuracion inicial
 
 
-//Cros site stuff!!! o__o!!!!
+//o__o!!!!
 app.use(function (req, res, next) {
 
     // Website you wish to allow to connect
@@ -77,7 +77,9 @@ app.get('/', function (req, res) {
         '<h3>Metodos PUT:</h3>'+
         '<li>Actualiza la informacion de un evento : evento/:id</li>'+
         '<div>{"creador":id,"nombre":"nombre","fecha":"2013/12/24","participantes":99,"precio":100}</div>'+
-  			'</ul>'
+  			'<h3>Metodos DELETE:</h3>'+
+        '<li>Elimina un evento : evento/:id</li>'+
+        '</ul>'
   			);
 });
 
