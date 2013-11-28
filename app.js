@@ -143,31 +143,19 @@ app.get('/eventos/admin/:id', function (req, res){
 /*************************/
 
 //Crea un nuevo evento
-app.post('evento', function(req, res) {
-  if(!req.body.hasOwnProperty('nombre') || 
-     !req.body.hasOwnProperty('fecha')) {
-    res.statusCode = 400;
-    return res.send('Error 400, el formato del post JSON es incorrecto debe ser:'+
-      '{'+
-        '"creador":id,'+
-        '"nombre":"nombre",'+
-        '"fecha":"2013/12/24",'+
-        '"participantes":99,'+
-        '"precio":100'+      
-      '}');
-  }
+app.put('evento', function(req, res) {
 
   var nombre = req.body.nombre;
-  var fecha = new Date(req.body.fecha);
+  var fecha = new Date(req.body.fecha_evento);
   var fecha = formatDate(fecha);
-  var participantes = req.body.participantes;
+  var participantes = req.body.numero_participantes;
   var precio = req.body.precio;
-  var creador = req.body.creador;
   var activo = "activo";
-  
-  
-  connection.query('INSERT into intercambios_evento ( admin_id, nombre , fecha_evento, numero_participantes, precio, fecha_creacion,estado ) values ('+"'"+creador+"'"+',' + "'"+ nombre +"'" +',' + "'"+ fecha +"'" +',' + "'"+ participantes +"'" +',' + "'"+ precio +"',NOW()," +"'"+activo+"'"+');', function (error, rows, fields) {  
-      connection.query('INSERT into intercambios_participantesevento (usuario_id, evento_id, fecha ) values ('+"'"+creador+"'"+','+"'"+rows['insertId']+"',NOW()"+');', function (error, rows, fields) { 
+  var admin_id = req.body.admin_id;
+
+
+  connection.query('INSERT into intercambios_evento ( admin_id, nombre , fecha_evento, numero_participantes, precio, fecha_creacion,estado ) values ('+"'"+admin_id+"'"+',' + "'"+ nombre +"'" +',' + "'"+ fecha +"'" +',' + "'"+ participantes +"'" +',' + "'"+ precio +"',NOW()," +"'"+activo+"'"+');', function (error, rows, fields) {  
+      connection.query('INSERT into intercambios_participantesevento (usuario_id, evento_id, fecha ) values ('+"'"+admin_id+"'"+','+"'"+rows['insertId']+"',NOW()"+');', function (error, rows, fields) { 
          res.writeHead(200, {'Content-Type': 'application/json'});
         res.end(JSON.stringify(rows));
       }); 
