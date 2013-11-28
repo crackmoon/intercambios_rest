@@ -240,6 +240,19 @@ app.put('/cancelar/evento/:id', function(req, res) {
 //       Metodos DELETE     
 /*************************/
 
+app.delete('/evento/:id', function(req, res) {
+	  
+	  connection.query('delete from intercambios_evento where id= '+req.params.id+ ';',function (error, rows, fields) {
+		  console.log(error);
+	   	    
+	  }); 
+
+	  res.writeHead(200, {'Content-Type': 'text/plain'});
+	  res.end('Se cancelo el evento:'+req.params.id);
+
+
+	});
+
 
 //Formateo para poder guardar fechas en mysql
 function formatDate(date) {
