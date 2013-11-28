@@ -143,7 +143,7 @@ app.get('/eventos/admin/:id', function (req, res){
 /*************************/
 
 //Crea un nuevo evento
-app.put('evento', function(req, res) {
+app.post('evento', function(req, res) {
 
   var nombre = req.body.nombre;
   var fecha = new Date(req.body.fecha_evento);
